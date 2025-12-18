@@ -1,8 +1,8 @@
-.. django-nose documentation master file
+.. django-nose-ng documentation master file
 
-===========
-django-nose
-===========
+==============
+django-nose-ng
+==============
 
 .. include:: ../README.rst
     :start-after: .. Omit badges from docs

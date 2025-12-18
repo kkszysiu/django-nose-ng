@@ -1,25 +1,33 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 5
       matrix:
-        python-version: ['3.5', '3.6', '3.7', '3.8']
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+        django-version: ['4.2', '5.0', '5.1']
+        exclude:
+          # Django 5.0+ requires Python 3.10+
+          - python-version: '3.14'
+            django-version: '4.2'
 
     services:
       postgres:
-        image: postgres:10
+        image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         ports:
-        - 5432:5432
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -27,52 +35,109 @@ jobs:
           --health-retries 5
 
       mariadb:
-        image: mariadb:10.3
+        image: mariadb:11
         env:
           MYSQL_ROOT_PASSWORD: mysql
           MYSQL_DATABASE: mysql
         options: >-
-          --health-cmd "mysqladmin ping"
+          --health-cmd "mariadb-admin ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-        - 3306:3306
+          - 3306:3306
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
 
-    - name: Get pip cache dir
-      id: pip-cache
-      run: |
-        echo "::set-output name=dir::$(pip cache dir)"
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
 
-    - name: Cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key:
-          ${{ matrix.python-version }}-v1-${{ hashFiles('**/setup.py') }}-${{ hashFiles('**/tox.ini') }}
-        restore-keys: |
-          ${{ matrix.python-version }}-v1-
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv pip install -e ".[test]"
+          uv pip install "Django~=${{ matrix.django-version }}.0"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade tox tox-gh-actions
+      - name: Run tests with SQLite
+        run: |
+          uv run coverage run --parallel-mode manage.py test -v 2 --noinput
+        env:
+          DATABASE_URL: sqlite:////tmp/test.db
 
-    - name: Test with tox
-      run: tox
-      env:
-        COVERAGE: 1
-        RUNTEST_ARGS: "-v --noinput"
+      - name: Run tests with PostgreSQL
+        run: |
+          uv pip install psycopg2-binary
+          uv run coverage run --parallel-mode manage.py test -v 2 --noinput
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
-    - name: Upload coverage
-      uses: codecov/codecov-action@v1
-      with:
-        name: Python ${{ matrix.python-version }}
+      - name: Run tests with MySQL
+        run: |
+          uv pip install mysqlclient
+          uv run coverage run --parallel-mode manage.py test -v 2 --noinput
+        env:
+          DATABASE_URL: mysql://root:mysql@127.0.0.1:3306/mysql
+
+      - name: Combine coverage
+        run: |
+          uv run coverage combine
+          uv run coverage xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          name: Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv pip install ruff
+
+      - name: Run ruff check
+        run: uv run ruff check .
+
+      - name: Run ruff format check
+        run: uv run ruff format --check .
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv pip install -e ".[docs]"
+
+      - name: Build docs
+        run: |
+          cd docs
+          uv run sphinx-build -b html -d _build/doctrees . _build/html

@@ -1,16 +1,12 @@
-# coding: utf-8
 """The django_nose module."""
-from pkg_resources import get_distribution, DistributionNotFound
+from importlib.metadata import PackageNotFoundError, version
 
 from django_nose.runner import BasicNoseRunner, NoseTestSuiteRunner
 from django_nose.testcases import FastFixtureTestCase
 
-assert BasicNoseRunner
-assert NoseTestSuiteRunner
-assert FastFixtureTestCase
+__all__ = ["BasicNoseRunner", "NoseTestSuiteRunner", "FastFixtureTestCase", "__version__"]
 
 try:
-    __version__ = get_distribution("django-nose").version
-except DistributionNotFound:
-    # package is not installed
-    pass
+    __version__ = version("django-nose-ng")
+except PackageNotFoundError:
+    __version__ = "0.0.0"

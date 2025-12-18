@@ -1,26 +1,22 @@
-===========
-django-nose
-===========
+==============
+django-nose-ng
+==============
 
-.. image:: https://img.shields.io/pypi/v/django-nose.svg
+.. image:: https://img.shields.io/pypi/v/django-nose-ng.svg
     :alt: The PyPI package
-    :target: https://pypi.python.org/pypi/django-nose
+    :target: https://pypi.python.org/pypi/django-nose-ng
 
-.. image:: https://github.com/jazzband/django-nose/workflows/Test/badge.svg
-    :target: https://github.com/jazzband/django-nose/actions
+.. image:: https://github.com/kkszysiu/django-nose-ng/workflows/Test/badge.svg
+    :target: https://github.com/kkszysiu/django-nose-ng/actions
     :alt: GitHub Actions
 
-.. image:: https://codecov.io/gh/jazzband/django-nose/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/kkszysiu/django-nose-ng/branch/master/graph/badge.svg
     :alt: Coverage
-    :target: https://codecov.io/gh/jazzband/django-nose
-
-.. image:: https://jazzband.co/static/img/badge.svg
-    :alt: Jazzband
-    :target: https://jazzband.co/
+    :target: https://codecov.io/gh/kkszysiu/django-nose-ng
 
 .. Omit badges from docs
 
-**django-nose** provides all the goodness of `nose`_ in your Django tests, like:
+**django-nose-ng** provides all the goodness of `nose-ng`_ in your Django tests, like:
 
 * Testing just your apps by default, not all the standard ones that happen to
   be in ``INSTALLED_APPS``
@@ -31,7 +27,7 @@ django-nose
   accidentally shadowing test classes.
 * Taking advantage of all the useful `nose plugins`_
 
-.. _nose: https://nose.readthedocs.io/en/latest/
+.. _nose-ng: https://github.com/kkszysiu/nose-ng
 .. _nose plugins: http://nose-plugins.jottit.com/
 
 It also provides:
@@ -43,60 +39,53 @@ It also provides:
 * Support for various databases. Tested with MySQL, PostgreSQL, and SQLite.
   Others should work as well.
 
-django-nose requires nose 1.2.1 or later, and the `latest release`_ is
-recommended.  It follows the `Django's support policy`_, supporting:
+django-nose-ng requires nose-ng 1.4.3 or later. It supports:
 
-* Django 1.8 (LTS) with Python 3.5
-* Django 1.9 with Python 3.5
-* Django 1.10 with Python 3.5
-* Django 1.11 (LTS) with Python 3.5 or 3.6
-* Django 2.0 with Python 3.5, 3.6, or 3.7
-* Django 2.1 with Python 3.5, 3.6, or 3.7
-* Django 2.2 with Python 3.5, 3.6, or 3.7
-
-.. _latest release: https://pypi.python.org/pypi/nose
-.. _Django's support policy: https://docs.djangoproject.com/en/1.8/internals/release-process/#supported-versions
+* Django 4.2 (LTS) with Python 3.11 or 3.12
+* Django 5.0 with Python 3.11, 3.12, or 3.13
+* Django 5.1 with Python 3.11, 3.12, 3.13, or 3.14
 
 
 Note to users
 -------------
 
-`nose`_ has been in maintenance mode since at least 2015. ``django-nose`` is in
-maintenance mode as well, and the sole maintainer is no longer an active user.
-See `Jazzband.co`_ to learn how ``django-nose`` is maintained and how you can
-help. New projects should consider using `pytest`_, or `unittest`_ with the
-`Django testing framework`_.
+This is a fork of the original `django-nose`_ project, updated to work with
+modern Python (3.11+) and Django (4.2+) versions. It uses `nose-ng`_ instead
+of the unmaintained ``nose`` package.
 
-.. _Jazzband.co: https://jazzband.co
-.. _pytest: https://docs.pytest.org/en/stable/
-.. _unittest: https://docs.python.org/3/library/unittest.html
-.. _Django testing framework: https://docs.djangoproject.com/en/3.1/topics/testing/
+.. _django-nose: https://github.com/jazzband/django-nose
 
 Installation
 ------------
 
-You can get django-nose from PyPI with... :
+You can get django-nose-ng from PyPI with... :
 
 .. code-block:: shell
 
-    $ pip install django-nose
+    $ pip install django-nose-ng
+
+Or using uv:
+
+.. code-block:: shell
+
+    $ uv add django-nose-ng
 
 The development version can be installed with... :
 
 .. code-block:: shell
 
-    $ pip install -e git://github.com/jazzband/django-nose.git#egg=django-nose
+    $ pip install -e git+https://github.com/kkszysiu/django-nose-ng.git#egg=django-nose-ng
 
-Since django-nose extends Django's built-in test command, you should add it to
+Since django-nose-ng extends Django's built-in test command, you should add it to
 your ``INSTALLED_APPS`` in ``settings.py``:
 
 .. code-block:: python
 
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         ...
         'django_nose',
         ...
-    )
+    ]
 
 Then set ``TEST_RUNNER`` in ``settings.py``:
 
@@ -106,6 +95,5 @@ Then set ``TEST_RUNNER`` in ``settings.py``:
 
 Development
 -----------
-:Code:   https://github.com/jazzband/django-nose
-:Issues: https://github.com/jazzband/django-nose/issues?state=open
-:Docs:   https://django-nose.readthedocs.io
+:Code:   https://github.com/kkszysiu/django-nose-ng
+:Issues: https://github.com/kkszysiu/django-nose-ng/issues?state=open

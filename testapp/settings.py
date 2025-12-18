@@ -20,7 +20,9 @@ BASE_DIR = path.dirname(path.dirname(__file__))
 
 DATABASES = {"default": env.db("DATABASE_URL", default="sqlite:////tmp/test.sqlite")}
 
-MIDDLEWARE_CLASSES = ()
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MIDDLEWARE = []
 
 INSTALLED_APPS = [
     "django_nose",

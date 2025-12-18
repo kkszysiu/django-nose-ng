@@ -1,8 +1,21 @@
 Changelog
 ---------
 
-unreleased
-~~~~~~~~~~
+2.0.0 (unreleased)
+~~~~~~~~~~~~~~~~~~
+
+* Forked as django-nose-ng to continue development with modern Python/Django.
+* Updated to support Python 3.11, 3.12, 3.13, and 3.14.
+* Updated to support Django 4.2, 5.0, and 5.1.
+* Dropped support for Python < 3.11 and Django < 4.2.
+* Migrated from setup.py to pyproject.toml with hatchling build backend.
+* Migrated from flake8 to ruff for linting.
+* Migrated from pip to uv for package management in CI.
+* Updated to use importlib.metadata instead of deprecated pkg_resources.
+* Uses nose-ng instead of unmaintained nose.
+
+1.4.8 (unreleased - original django-nose)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Dropped Python 2 support.
 * Moved CI to
