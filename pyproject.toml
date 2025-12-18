@@ -12,7 +12,7 @@ authors = [
     {name = "Jeff Balogh", email = "me@jeffbalogh.org"},
 ]
 maintainers = [
-    {name = "Kamil Klinikowski", email = "kamil@klinikowski.pl"},
+    {name = "Krzysztof Klinikowski", email = "kkszysiu@gmail.com"},
 ]
 keywords = ["django", "nose", "django-nose", "testing"]
 classifiers = [
